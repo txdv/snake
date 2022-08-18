@@ -98,6 +98,7 @@ object Display {
 
 class SnakeGame(width: Int, height: Int) {
 
+  // starting state of the game
   var state = GameState(
     Snake(Pos(3, 2), Pos(3, 3), Pos(3, 4)),
     Pos(1, 1)
@@ -151,33 +152,27 @@ class SnakeGame(width: Int, height: Int) {
       }
 
       line.mkString(" ")
-    }.mkString("")
+    }.mkString("\n")
   }
 
-  val steps = 
-    LazyList.from(Seq(Direction.Forward, Direction.Left)) ++
-    LazyList.continually(Direction.Forward)
+  def run(steps: Stream[Direction]): Unit = {
+    steps.foreach(run)
+  }
 
-  def run(): Unit = steps.foreach { direction =>
-    state = step(state, direction)
-    
-    val isOverlapping =
-      state.snake
-        .positions(width, height)
-        .groupBy(i => i)
-        .map(_._2.length)
-        .max > 1
-    
-    if (isOverlapping) {
+  def run(direction: Direction): Boolean = {
+    if (state.snake.isOverlapping(width, height)) {
+      println(s"Game over, your snake was ${state.snake.positions(width, height).length - 1} long")
       System.exit(0)
     }
 
-    println(fieldMap)
-    Thread.sleep(1000)
     println(EscapeCode.right(12) + EscapeCode.up(7))
+
+    state = step(state, direction)
+
+    println(fieldMap)
+    true
   }
 }
-
 
 object EscapeCode {
   def right(n: Int) = s"\u001b[${n}C"

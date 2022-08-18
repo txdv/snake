@@ -11,5 +11,7 @@ lazy val root = (project in file("."))
     libraryDependencies += scalaTest % Test
   )
 
+// https://mvnrepository.com/artifact/org.jline/jline
+libraryDependencies += "org.jline" % "jline" % "3.21.0"
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
