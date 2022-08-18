@@ -10,7 +10,7 @@ object Main {
 
   var ch: Char = _
 
-  var done = false
+  def done = game.isGameOver
 
   def inputLoop: Unit = {
     val terminal = TerminalBuilder.builder()
@@ -38,6 +38,10 @@ object Main {
     Thread.sleep(stepTime.toMillis)
 
     val direction = game.state.snake.direction
+    // the following could be simplified
+    // but this was the most straight forward way
+    // to map the perspective of the player
+    // to the snakes perspective
     val result = (direction, ch) match {
       case (Pos.Up, Key.Left) =>
         Direction.Left
@@ -78,7 +82,6 @@ object Main {
     directionStream.foreach { direction =>
       game.run(direction) match {
         case None =>
-          done = true
           println(s"Game over")
         case Some(state) =>
           println(EscapeCode.right(11) + EscapeCode.up(7))

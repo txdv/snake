@@ -165,11 +165,15 @@ class SnakeGame(random: Random, width: Int, height: Int) {
     }.mkString("\n")
   }
 
+  def isGameOver: Boolean = {
+    state.snake.isOverlapping(width, height)
+  }
+
   def run(direction: Direction): Option[GameState] = {
 
     state = step(state, direction)
 
-    if (state.snake.isOverlapping(width, height)) {
+    if (isGameOver) {
       Option.empty
     } else {
       Some(state)
