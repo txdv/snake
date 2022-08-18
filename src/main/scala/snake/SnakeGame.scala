@@ -83,19 +83,17 @@ case class GameState(snake: Snake, apple: Pos) {
 }
 
 sealed trait Display {
-  val char: Char
+  def char: Char = this match {
+    case Display.Head => 'o'
+    case Display.Tail => 'x'
+    case Display.Apple => '@'
+  }
 }
 
 object Display {
-  case object Head extends Display {
-    val char = 'o'
-  }
-  case object Tail extends Display {
-    val char = 'x'
-  }
-  case object Apple extends Display {
-    val char = '@'
-  }
+  case object Head extends Display
+  case object Tail extends Display
+  case object Apple extends Display
 }
 
 class SnakeGame(width: Int, height: Int) {
