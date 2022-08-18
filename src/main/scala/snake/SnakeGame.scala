@@ -78,7 +78,7 @@ case object Snake {
   }
 }
 
-case class GameState(snake: Snake, apple: Pos) {
+case class GameState(snake: Snake, apple: Pos, width: Int, height: Int) {
   def display(w: Int, h: Int): Map[Pos, Display] = {
     Map(
       apple -> Display.Apple,
@@ -106,7 +106,8 @@ class SnakeGame(width: Int, height: Int) {
   // starting state of the game
   var state = GameState(
     Snake(Pos(3, 2), Pos(3, 3), Pos(3, 4)),
-    Pos(1, 1)
+    Pos(1, 1),
+    width, height
   )
 
   def swayHead(headDirection: Pos, direction: Direction): Pos = {
@@ -139,7 +140,7 @@ class SnakeGame(width: Int, height: Int) {
       if (hitApple) freeFields.toSeq(random.nextInt(freeFields.size))
       else state.apple
 
-    GameState(nextSnake, nextApple)
+    GameState(nextSnake, nextApple, width, height)
   }
 
   private val fields: Seq[Seq[Pos]] = {
@@ -160,27 +161,14 @@ class SnakeGame(width: Int, height: Int) {
     }.mkString("\n")
   }
 
-  def run(steps: Stream[Direction]): Unit = {
-    println(fieldMap)
-    steps.foreach(run)
-  }
-
-  def run(direction: Direction): Boolean = {
+  def run(direction: Direction): Either[GameState, GameState] = {
 
     state = step(state, direction)
 
     if (state.snake.isOverlapping(width, height)) {
-      println(s"Game over, your snake was ${state.snake.positions(width, height).length} long")
-      System.exit(0)
+      Left(state)
+    } else {
+      Right(state)
     }
-
-    println(EscapeCode.right(11) + EscapeCode.up(7))
-    println(fieldMap)
-    true
   }
-}
-
-object EscapeCode {
-  def right(n: Int) = s"\u001b[${n}C"
-  def up(n: Int) = s"\u001b[${n}A"
 }

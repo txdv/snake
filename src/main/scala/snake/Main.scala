@@ -69,7 +69,19 @@ object Main {
     // fire up the input reader
     Future { inputLoop }
 
-    game.run(directionStream)
+    // initial draw of the field
+    println(game.fieldMap)
+
+    directionStream.foreach { direction =>
+      game.run(direction) match {
+        case Left(state) =>
+          println(s"Game over")
+          System.exit(0)
+        case Right(state) =>
+          println(EscapeCode.right(11) + EscapeCode.up(7))
+          println(game.fieldMap)
+      }
+    }
   }
 }
 
@@ -78,4 +90,9 @@ object Key {
   val Left = 68
   val Right = 67
   val Down = 66
+}
+
+object EscapeCode {
+  def right(n: Int) = s"\u001b[${n}C"
+  def up(n: Int) = s"\u001b[${n}A"
 }
