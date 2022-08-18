@@ -74,10 +74,10 @@ object Main {
 
     directionStream.foreach { direction =>
       game.run(direction) match {
-        case Left(state) =>
+        case None =>
           println(s"Game over")
           System.exit(0)
-        case Right(state) =>
+        case Some(state) =>
           println(EscapeCode.right(11) + EscapeCode.up(7))
           println(game.fieldMap)
       }

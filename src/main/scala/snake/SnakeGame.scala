@@ -1,5 +1,7 @@
 package snake
 
+import scala.util.Random
+
 sealed trait Direction
 object Direction {
   case object Left extends Direction
@@ -101,7 +103,10 @@ object Display {
   case object Apple extends Display
 }
 
-class SnakeGame(width: Int, height: Int) {
+class SnakeGame(random: Random, width: Int, height: Int) {
+
+  def this(width: Int, height: Int) =
+    this(new scala.util.Random, width, height)
 
   // starting state of the game
   var state = GameState(
@@ -120,8 +125,6 @@ class SnakeGame(width: Int, height: Int) {
         headDirection.swap * -1
     }
   }
-
-  val random = new scala.util.Random()
 
   def step(state: GameState, direction: Direction): GameState = {
     val snake = state.snake
@@ -161,14 +164,14 @@ class SnakeGame(width: Int, height: Int) {
     }.mkString("\n")
   }
 
-  def run(direction: Direction): Either[GameState, GameState] = {
+  def run(direction: Direction): Option[GameState] = {
 
     state = step(state, direction)
 
     if (state.snake.isOverlapping(width, height)) {
-      Left(state)
+      Option.empty
     } else {
-      Right(state)
+      Some(state)
     }
   }
 }
