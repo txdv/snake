@@ -136,11 +136,12 @@ class SnakeGame(random: Random, width: Int, height: Int) {
 
     val nextSnake = state.snake.move(nextHead, !hitApple)
 
-    val freeFields =
-      fields.flatten.toSet diff state.snake.positions(width, height).toSet
-
     val nextApple =
-      if (hitApple) freeFields.toSeq(random.nextInt(freeFields.size))
+      if (hitApple) {
+        val freeFields =
+          fields.flatten.toSet diff state.snake.positions(width, height).toSet
+        freeFields.toSeq(random.nextInt(freeFields.size))
+      }
       else state.apple
 
     GameState(nextSnake, nextApple, width, height)
