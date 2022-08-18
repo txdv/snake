@@ -10,6 +10,8 @@ object Main {
 
   var ch: Char = _
 
+  var done = false
+
   def inputLoop: Unit = {
     val terminal = TerminalBuilder.builder()
       .jna(true)
@@ -20,21 +22,21 @@ object Main {
 
     val reader = terminal.reader()
 
-    while (true) {
+    do {
       ch = reader.read().toChar
       if (ch == 'q' || ch.toInt == 4) {
         reader.close()
         terminal.close()
-        System.exit(0)
         return;
       }
-    }
+    } while (!done)
   }
 
   val stepTime = 500.millis
 
   val directionStream = Stream.continually {
     Thread.sleep(stepTime.toMillis)
+
     val direction = game.state.snake.direction
     val result = (direction, ch) match {
       case (Pos.Up, Key.Left) =>
@@ -53,11 +55,12 @@ object Main {
         Direction.Left
       case (Pos.Right, Key.Down) =>
         Direction.Right
-      case (_, _) => Direction.Forward
+      case (_, _) =>
+        Direction.Forward
     }
-    ch = 0.toChar
+    ch = 0.toChar // reset
     result
-  }
+  }.takeWhile(_ => !done)
 
   def main(args: Array[String]): Unit = {
 
@@ -75,8 +78,8 @@ object Main {
     directionStream.foreach { direction =>
       game.run(direction) match {
         case None =>
+          done = true
           println(s"Game over")
-          System.exit(0)
         case Some(state) =>
           println(EscapeCode.right(11) + EscapeCode.up(7))
           println(game.fieldMap)
