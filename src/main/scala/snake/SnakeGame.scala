@@ -41,9 +41,6 @@ case class Snake(head: Pos, tail: List[Pos]) {
   def direction: Pos =
     tail.head - head
     
-  def positions(w: Int, h: Int): List[Pos] =
-    (head +: tail).map(_.positiveMod(w, h))
-    
   def addHead(newHead: Pos): Snake =
     Snake(newHead, head +: tail)
 
@@ -56,6 +53,18 @@ case class Snake(head: Pos, tail: List[Pos]) {
     } else {
       addHead(newHead)
     }
+
+  // the snake exists in a dimension with no boundaries
+  // and is folded into a box to see if there are
+  // overlapping values
+  def isOverlapping(width: Int, height: Int): Boolean =
+    positions(width, height)
+      .groupBy(identity)
+      .map(_._2.length)
+      .max > 1
+
+  def positions(w: Int, h: Int): List[Pos] =
+    (head +: tail).map(_.positiveMod(w, h))
 }
 
 case object Snake {
@@ -135,8 +144,7 @@ class SnakeGame(width: Int, height: Int) {
     }
   }
 
-
-  def fieldMap(): Seq[String] = {
+  def fieldMap: String = {
     val symbols = state.display(width, height)
 
     fields.map { row =>
@@ -145,7 +153,7 @@ class SnakeGame(width: Int, height: Int) {
       }
 
       line.mkString(" ")
-    }
+    }.mkString("")
   }
 
   val steps = 
@@ -166,7 +174,7 @@ class SnakeGame(width: Int, height: Int) {
       System.exit(0)
     }
 
-    println(fieldMap().mkString("\n"))
+    println(fieldMap)
     Thread.sleep(1000)
     println(EscapeCode.right(12) + EscapeCode.up(7))
   }
