@@ -34,6 +34,11 @@ object Pos {
   def positiveMod(i: Int, n: Int): Int = {
     (i % n + n) % n
   }
+
+  val Up = Pos(0, 1)
+  val Down = Pos(0, -1)
+  val Left = Pos(-1, 0)
+  val Right = Pos(1, 0)
 }
 
 case class Snake(head: Pos, tail: List[Pos]) {
@@ -156,19 +161,20 @@ class SnakeGame(width: Int, height: Int) {
   }
 
   def run(steps: Stream[Direction]): Unit = {
+    println(fieldMap)
     steps.foreach(run)
   }
 
   def run(direction: Direction): Boolean = {
-    if (state.snake.isOverlapping(width, height)) {
-      println(s"Game over, your snake was ${state.snake.positions(width, height).length - 1} long")
-      System.exit(0)
-    }
-
-    println(EscapeCode.right(12) + EscapeCode.up(7))
 
     state = step(state, direction)
 
+    if (state.snake.isOverlapping(width, height)) {
+      println(s"Game over, your snake was ${state.snake.positions(width, height).length} long")
+      System.exit(0)
+    }
+
+    println(EscapeCode.right(11) + EscapeCode.up(7))
     println(fieldMap)
     true
   }
