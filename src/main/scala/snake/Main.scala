@@ -10,7 +10,11 @@ object Main {
 
   var ch: Char = _
 
-  def done = game.isGameOver
+  var done = false
+
+  def isDone: Boolean = {
+    done || game.isGameOver
+  }
 
   def inputLoop: Unit = {
     val terminal = TerminalBuilder.builder()
@@ -27,9 +31,12 @@ object Main {
       if (ch == 'q' || ch.toInt == 4) {
         reader.close()
         terminal.close()
-        return;
+        done = true
       }
-    } while (!done)
+    } while (!isDone)
+
+    reader.close()
+    terminal.close()
   }
 
   val stepTime = 500.millis
@@ -64,7 +71,7 @@ object Main {
     }
     ch = 0.toChar // reset
     result
-  }.takeWhile(_ => !done)
+  }.takeWhile(_ => !isDone)
 
   def main(args: Array[String]): Unit = {
 
