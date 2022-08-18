@@ -12,6 +12,4 @@ lazy val root = (project in file("."))
   )
 
 
-libraryDependencies += "org.specs2" %% "specs2-core" % "3.7.3" % "test"
-
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
